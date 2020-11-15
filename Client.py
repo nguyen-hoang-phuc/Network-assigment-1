@@ -168,7 +168,6 @@ class Client:
 			# Keep track of the sent request.
 			# self.requestSent = ...
 			self.requestSent = self.SETUP
-			self.state = self.READY
 		# Play request
 		elif requestCode == self.PLAY and self.state == self.READY:
 			# Update RTSP sequence number.
@@ -182,7 +181,6 @@ class Client:
 			# Keep track of the sent request.
 			# self.requestSent = ...
 			self.requestSent = self.PLAY
-			self.state = self.PLAYING
 		# Pause request
 		elif requestCode == self.PAUSE and self.state == self.PLAYING:
 			# Update RTSP sequence number.
@@ -196,7 +194,6 @@ class Client:
 			# Keep track of the sent request.
 			# self.requestSent = ...
 			self.requestSent = self.PAUSE
-			self.state = self.READY
 		# Teardown request
 		elif requestCode == self.TEARDOWN and not self.state == self.INIT:
 			# Update RTSP sequence number.
@@ -210,7 +207,6 @@ class Client:
 			# Keep track of the sent request.
 			# self.requestSent = ...
 			self.requestSent = self.TEARDOWN
-			self.state = self.INIT
 		else:
 			return
 		
@@ -237,7 +233,6 @@ class Client:
 		"""Parse the RTSP reply from the server."""
 		lines = data.split('\n')
 		seqNum = int(lines[1].split(' ')[1])
-		
 		# Process only if the server reply's sequence number is the same as the request's
 		if seqNum == self.rtspSeq:
 			session = int(lines[2].split(' ')[1])
@@ -262,7 +257,7 @@ class Client:
 						self.state = self.PLAYING
 					elif self.requestSent == self.PAUSE:
 						# self.state = ...
-						self.state = self.PAUSE
+						self.state = self.READY
 						# The play thread exits. A new thread is created on resume.
 						self.playEvent.set()
 					elif self.requestSent == self.TEARDOWN:
